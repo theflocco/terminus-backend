@@ -9,6 +9,7 @@ import java.util.*
 @RestController
 class RestEndpointController(private val terminService: TerminService) {
 
+    @CrossOrigin
     @RequestMapping("/all")
     fun getAll(): List<Termin> {
         val allTermine = terminService.getAllTermine()
@@ -22,7 +23,7 @@ class RestEndpointController(private val terminService: TerminService) {
         terminService.addTermin(termin)
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     fun getTerminById(@PathVariable id: String): Termin {
         val terminById = terminService.findTerminById(id);
         return terminById.get(0);
