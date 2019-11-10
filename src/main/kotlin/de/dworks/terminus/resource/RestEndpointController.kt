@@ -11,13 +11,21 @@ class RestEndpointController(private val terminService: TerminService) {
 
     @RequestMapping("/all")
     fun getAll(): List<Termin> {
-        return terminService.getAllTermine();
+        val allTermine = terminService.getAllTermine()
+        print("return list of termine: " + allTermine.size)
+        return allTermine
     }
 
     @PostMapping("/add")
     fun addTermin(@RequestBody termin: Termin) {
-        print("add called")
+        print("adding termin" + termin)
         terminService.addTermin(termin)
+    }
+
+    @GetMapping("/{id}")
+    fun getTerminById(@PathVariable id: String): Termin {
+        val terminById = terminService.findTerminById(id);
+        return terminById.get(0);
     }
 
     @RequestMapping("/hi")
@@ -28,7 +36,7 @@ class RestEndpointController(private val terminService: TerminService) {
 
     @GetMapping("/termin")
     fun getTermin(): Termin {
-        var termin = Termin(id = 1, name = "hi", description = "descr", startDate = Date.from(Instant.now()), endDate = Date.from(Instant.now()))
+        var termin = Termin(id = "1", name = "hi", description = "descr", startDate = Date.from(Instant.now()), endDate = Date.from(Instant.now()))
         return termin
     }
 

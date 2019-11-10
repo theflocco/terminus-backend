@@ -1,5 +1,6 @@
 package de.dworks.terminus.model
 
+import org.hibernate.annotations.GenericGenerator
 import java.util.*
 import javax.persistence.*
 
@@ -7,8 +8,9 @@ import javax.persistence.*
 data class Termin(
 
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Int,
+        @GeneratedValue(generator = "uuid")
+        @GenericGenerator(name = "uuid", strategy = "uuid2")
+        val id: String,
 
         val name: String,
 

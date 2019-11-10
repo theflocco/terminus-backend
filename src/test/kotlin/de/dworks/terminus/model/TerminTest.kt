@@ -8,7 +8,7 @@ class TerminTest {
 
     @Test
     fun initTermin() {
-        val termin = Termin(1, "name", "descr", Date.from(Instant.now()), Date.from(Instant.now())
+        val termin = Termin("1", "name", "descr", Date.from(Instant.now()), Date.from(Instant.now())
         )
         assert(!termin.startDate.equals(null))
     }

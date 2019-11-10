@@ -17,4 +17,11 @@ class TerminService(private val terminRepository: TerminRepository) {
     fun addTermin(termin: Termin) {
         terminRepository.save(termin);
     }
+
+    fun findTerminById(id: String): List<Termin> {
+        val all = terminRepository.findAll()
+        val filtered = all.filter { t -> id.equals(t.id) }
+        return filtered
+
+    }
 }
