@@ -1,15 +1,16 @@
 package de.dworks.terminus.resource
 
 import de.dworks.terminus.model.Termin
+import de.dworks.terminus.model.TerminDTO
 import de.dworks.terminus.service.TerminService
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
 import java.util.*
 
+@CrossOrigin(origins = ["http://localhost:4200"])
 @RestController
 class RestEndpointController(private val terminService: TerminService) {
 
-    @CrossOrigin
     @RequestMapping("/all")
     fun getAll(): List<Termin> {
         val allTermine = terminService.getAllTermine()
@@ -18,9 +19,14 @@ class RestEndpointController(private val terminService: TerminService) {
     }
 
     @PostMapping("/add")
-    fun addTermin(@RequestBody termin: Termin) {
+    fun addTermin(@RequestBody terminDTO: TerminDTO) {
+        val termin = mapToTermin(terminDTO)
         print("adding termin" + termin)
         terminService.addTermin(termin)
+    }
+
+    private fun mapToTermin(terminDTO: TerminDTO): Termin {
+        return Termin(terminDTO.id.orEmpty(), terminDTO.name, terminDTO.description, terminDTO.startDate, terminDTO.endDate)
     }
 
     @GetMapping("/id/{id}")
