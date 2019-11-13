@@ -9,7 +9,7 @@ data class TerminDTO(
 
         val description: String,
 
-        val startDate: Date,
+        val startDate: DateDTO,
 
-        val endDate: Date
+        val endDate: DateDTO
 )

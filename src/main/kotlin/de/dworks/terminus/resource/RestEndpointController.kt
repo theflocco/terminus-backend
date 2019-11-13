@@ -2,6 +2,7 @@ package de.dworks.terminus.resource
 
 import de.dworks.terminus.model.Termin
 import de.dworks.terminus.model.TerminDTO
+import de.dworks.terminus.service.IcsService
 import de.dworks.terminus.service.TerminService
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
@@ -9,7 +10,8 @@ import java.util.*
 
 @CrossOrigin(origins = ["http://localhost:4200"])
 @RestController
-class RestEndpointController(private val terminService: TerminService) {
+class RestEndpointController(private val terminService: TerminService,
+                             private val icsService: IcsService) {
 
     @RequestMapping("/all")
     fun getAll(): List<Termin> {
@@ -22,11 +24,18 @@ class RestEndpointController(private val terminService: TerminService) {
     fun addTermin(@RequestBody terminDTO: TerminDTO) {
         val termin = mapToTermin(terminDTO)
         print("adding termin" + termin)
-        terminService.addTermin(termin)
+        val savedTermin = terminService.addTermin(termin)
+        val icsData = icsService.returnAIcs(savedTermin.id)
     }
 
     private fun mapToTermin(terminDTO: TerminDTO): Termin {
-        return Termin(terminDTO.id.orEmpty(), terminDTO.name, terminDTO.description, terminDTO.startDate, terminDTO.endDate)
+        val startDateCal = Calendar.getInstance();
+        startDateCal.set(terminDTO.startDate.year, terminDTO.startDate.month, terminDTO.startDate.day)
+
+        val endDateCal = Calendar.getInstance();
+        endDateCal.set(terminDTO.endDate.year, terminDTO.endDate.month, terminDTO.endDate.day)
+
+        return Termin(terminDTO.id.orEmpty(), terminDTO.name, terminDTO.description, startDateCal.time, endDateCal.time)
     }
 
     @GetMapping("/id/{id}")
