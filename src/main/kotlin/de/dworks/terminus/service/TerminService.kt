@@ -18,9 +18,9 @@ class TerminService(private val terminRepository: TerminRepository) {
         return terminRepository.save(termin);
     }
 
-    fun findTerminById(id: String): List<Termin> {
+    fun findTerminById(id: String): Termin {
         val all = terminRepository.findAll()
-        val filtered = all.filter { t -> id.equals(t.id) }
+        val filtered = all.filter { t -> id.equals(t.id) }.first()
         return filtered
 
     }

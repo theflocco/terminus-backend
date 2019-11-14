@@ -1,9 +1,13 @@
 package de.dworks.terminus.resource
 
+import de.dworks.terminus.model.DateDTO
 import de.dworks.terminus.model.Termin
 import de.dworks.terminus.model.TerminDTO
 import de.dworks.terminus.service.IcsService
 import de.dworks.terminus.service.TerminService
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
 import java.util.*
@@ -20,12 +24,18 @@ class RestEndpointController(private val terminService: TerminService,
         return allTermine
     }
 
-    @PostMapping("/add")
-    fun addTermin(@RequestBody terminDTO: TerminDTO) {
+    @PostMapping("/add", produces = ["text/plain"])
+    fun addTermin(@RequestBody terminDTO: TerminDTO): ResponseEntity<String> {
         val termin = mapToTermin(terminDTO)
         print("adding termin" + termin)
         val savedTermin = terminService.addTermin(termin)
-        val icsData = icsService.returnAIcs(savedTermin.id)
+        //val icsData = icsService.returnAIcs(savedTermin.id)
+        return ResponseEntity<String>(savedTermin.id, HttpStatus.OK);
+    }
+
+    @GetMapping("/getIcs/{id}")
+    fun getIcsFile(@PathVariable id: String): String {
+        return icsService.returnAIcs(id);
     }
 
     private fun mapToTermin(terminDTO: TerminDTO): Termin {
@@ -41,7 +51,7 @@ class RestEndpointController(private val terminService: TerminService,
     @GetMapping("/id/{id}")
     fun getTerminById(@PathVariable id: String): Termin {
         val terminById = terminService.findTerminById(id);
-        return terminById.get(0);
+        return terminById;
     }
 
     @RequestMapping("/hi")
