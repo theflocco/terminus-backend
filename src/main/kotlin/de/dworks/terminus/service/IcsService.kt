@@ -40,17 +40,25 @@ class IcsService(private val terminRepository: TerminRepository) {
     fun mapToDateString(date: Date): String {
         var calendar = Calendar.getInstance();
         calendar.setTime(date)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val month = calendar.get(Calendar.MONTH)
-        val year = calendar.get(Calendar.YEAR)
-        val hour = calendar.get(Calendar.HOUR)
-        val minute = calendar.get(Calendar.MINUTE)
-        val second = calendar.get(Calendar.SECOND)
-        return year.toString()+month.toString()+day.toString()+"T"+hour.toString()+minute.toString()+second.toString();
+        val day = mapToValidTwoDigitEntity(calendar.get(Calendar.DAY_OF_MONTH))
+        val month = mapToValidTwoDigitEntity(calendar.get(Calendar.MONTH)+1)
+        val year = mapToValidTwoDigitEntity(calendar.get(Calendar.YEAR))
+        val hour = mapToValidTwoDigitEntity(calendar.get(Calendar.HOUR_OF_DAY))
+        val minute = mapToValidTwoDigitEntity(calendar.get(Calendar.MINUTE))
+        val second = mapToValidTwoDigitEntity(calendar.get(Calendar.SECOND))
+        return year+month+day+"T"+hour+minute+second;
     }
 
 
     fun readTextTemplate(): String {
         return this::class.java.classLoader.getResource(ICS_TEMPLATE).readText();
+    }
+
+    fun mapToValidTwoDigitEntity(aNumber: Int): String {
+        if (aNumber < 10) {
+            return "0"+aNumber.toString()
+        } else {
+            return aNumber.toString()
+        }
     }
 }

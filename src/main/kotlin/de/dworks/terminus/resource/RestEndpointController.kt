@@ -24,26 +24,26 @@ class RestEndpointController(private val terminService: TerminService,
         return allTermine
     }
 
-    @PostMapping("/add", produces = ["text/plain"])
-    fun addTermin(@RequestBody terminDTO: TerminDTO): ResponseEntity<String> {
+    @PostMapping("/add", produces = ["application/json"])
+    fun addTermin(@RequestBody terminDTO: TerminDTO): ResponseEntity<List<String>> {
         val termin = mapToTermin(terminDTO)
         print("adding termin" + termin)
         val savedTermin = terminService.addTermin(termin)
         //val icsData = icsService.returnAIcs(savedTermin.id)
-        return ResponseEntity<String>(savedTermin.id, HttpStatus.OK);
+        return ResponseEntity<List<String>>(Collections.singletonList(savedTermin.id), HttpStatus.OK);
     }
 
-    @GetMapping("/getIcs/{id}")
-    fun getIcsFile(@PathVariable id: String): String {
-        return icsService.returnAIcs(id);
+    @GetMapping("/getIcs/{id}", produces = ["application/octet-stream"])
+    fun getIcsFile(@PathVariable id: String): ByteArray {
+        return icsService.returnAIcs(id).toByteArray();
     }
 
     private fun mapToTermin(terminDTO: TerminDTO): Termin {
         val startDateCal = Calendar.getInstance();
-        startDateCal.set(terminDTO.startDate.year, terminDTO.startDate.month, terminDTO.startDate.day)
+        startDateCal.set(terminDTO.startDate.year, terminDTO.startDate.month-1, terminDTO.startDate.day, terminDTO.startDate.hour, terminDTO.startDate.minute)
 
         val endDateCal = Calendar.getInstance();
-        endDateCal.set(terminDTO.endDate.year, terminDTO.endDate.month, terminDTO.endDate.day)
+        endDateCal.set(terminDTO.endDate.year, terminDTO.endDate.month-1, terminDTO.endDate.day, terminDTO.endDate.hour, terminDTO.endDate.minute)
 
         return Termin(terminDTO.id.orEmpty(), terminDTO.name, terminDTO.description, startDateCal.time, endDateCal.time)
     }
