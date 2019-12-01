@@ -1,0 +1,16 @@
+#
+# Build stage
+#
+FROM maven:3.6.0-jdk-11-slim AS build
+RUN mkdir buildFolder
+COPY . /buildFolder
+RUN mvn -f /buildFolder/pom.xml clean package
+
+#
+# Package stage
+#
+FROM openjdk:11-jre-slim
+COPY --from=build /buildFolder/target/*.jar /usr/local/lib/demo.jar
+EXPOSE 8080
+EXPOSE 5432/TCP
+ENTRYPOINT ["java","-jar","/usr/local/lib/demo.jar"]
